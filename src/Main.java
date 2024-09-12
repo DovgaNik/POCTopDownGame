@@ -1,6 +1,9 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -66,6 +69,8 @@ public class Main {
             }
         };
 
+        panel.addMouseMotionListener(new MapMovementListener());
+        panel.addMouseListener(new MapMovementListener());
         panel.setSize(new Dimension(640, 480));
         frame.add(panel);
         frame.setVisible(true);
@@ -80,6 +85,57 @@ public class Main {
             textureIndex = textureI;
             this.x = x;
             this.y = y;
+        }
+    }
+
+    static int lastX, lastY;
+    static boolean isDragged;
+    private static class MapMovementListener implements MouseMotionListener, MouseListener {
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            int xOffset = lastX - e.getX();
+            int yOffset = lastY - e.getY();
+
+            lastX = e.getX();
+            lastY = e.getY();
+
+            cameraX = cameraX - xOffset;
+            cameraY = cameraY - yOffset;
+
+            panel.repaint();
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            isDragged = true;
+            lastX = e.getX();
+            lastY = e.getY();
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            isDragged = false;
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
         }
     }
 }
