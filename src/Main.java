@@ -12,6 +12,8 @@ import java.util.List;
 
 public class Main {
     static final String PATH_TO_TEXTURES = "assets/textures";
+    static final int SCREEN_SIZE_X = 1366;
+    static final int SCREEN_SIZE_Y = 768;
 
     static JFrame frame;
     static JPanel panel;
@@ -24,12 +26,25 @@ public class Main {
     public static void main(String[] args) {
         textures = loadTextures(PATH_TO_TEXTURES);
         map = new ArrayList<PositionOnMap>();
-        map.add(new PositionOnMap(0, 100, 100));
+
+        for (int i = 0; i < 20; i++) {
+            map.add(new PositionOnMap(1, 100, 100 + (24 * i)));
+        }
+
+        for (int i = 0; i < 20; i++) {
+            map.add(new PositionOnMap(1, 556, 100 + (24 * i)));
+        }
+
+        for (int i = 0; i < 20; i++) {
+            map.add(new PositionOnMap(1, 100 + (24 * i), 100));
+        }
+
+        for (int i = 0; i < 20; i++) {
+            map.add(new PositionOnMap(1, 100 + (24 * i), 556));
+        }
 
         initWindow();
         panel.repaint();
-
-        System.out.println(textures.size());
     }
 
     private static ArrayList<BufferedImage> loadTextures(String PATH_TO_TEXTURES) {
@@ -54,17 +69,23 @@ public class Main {
         frame = new JFrame("Proof of concept");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(true);
-        frame.setSize(new Dimension(640, 480));
+        frame.setSize(new Dimension(SCREEN_SIZE_X, SCREEN_SIZE_Y));
 
         panel = new JPanel() {
             @Override
             public void paintComponent(Graphics g){
                 super.paintComponent(g);
+                int viewW = this.getWidth();
+                int viewH = this.getHeight();
+                int textureW = textures.get(2).getWidth();
+                int textureH = textures.get(2).getHeight();
+
+                for (int i = 0; i < viewW; i += textureW)
+                    for (int j = 0; j < viewH; j += textureH)
+                        g.drawImage(textures.get(2), i, j, null);
 
                 for (PositionOnMap element : map) {
-
                     g.drawImage(textures.get(element.textureIndex), Math.round(element.x - cameraX), Math.round(element.y - cameraY), null);
-
                 }
             }
         };
@@ -100,8 +121,8 @@ public class Main {
             lastX = e.getX();
             lastY = e.getY();
 
-            cameraX = cameraX - xOffset;
-            cameraY = cameraY - yOffset;
+            cameraX = cameraX + xOffset;
+            cameraY = cameraY + yOffset;
 
             panel.repaint();
         }
